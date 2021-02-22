@@ -7,7 +7,6 @@ using NETworkManager.Utilities;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using NETworkManager.Models.WebConsole;
-using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
 
 namespace NETworkManager.Controls
 {
@@ -128,7 +127,7 @@ namespace NETworkManager.Controls
 
         private void RefreshAction()
         {
-            Browser2.Refresh();
+            Browser2.Reload();
         }
 
         public ICommand GoBackCommand
@@ -162,10 +161,10 @@ namespace NETworkManager.Controls
         }
         #endregion
 
-        #region Methods       
+        #region Methods
         private void Connect()
         {
-            Browser2.Navigate(_sessionInfo.Url);
+            Browser2.NavigateToString(_sessionInfo.Url);
         }
 
         public void CloseTab()
@@ -175,17 +174,17 @@ namespace NETworkManager.Controls
         #endregion
 
         #region Events
-        private void Browser2_NavigationCompleted(object sender, WebViewControlNavigationCompletedEventArgs e)
+        private void Browser2_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
-            Url = e.Uri.ToString();
+            Url = Browser2.Source.ToString();
 
             switch (e.WebErrorStatus)
             {
-                case WebErrorStatus.CertificateCommonNameIsIncorrect:
-                case WebErrorStatus.CertificateContainsErrors:
-                case WebErrorStatus.CertificateExpired:
-                case WebErrorStatus.CertificateIsInvalid:
-                case WebErrorStatus.CertificateRevoked:
+                case Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateCommonNameIsIncorrect:
+                case Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.ClientCertificateContainsErrors:
+                case Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateExpired:
+                case Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateIsInvalid:
+                case Microsoft.Web.WebView2.Core.CoreWebView2WebErrorStatus.CertificateRevoked:
                     IsCertificateInvalid = true;
                     break;
             }
@@ -196,7 +195,7 @@ namespace NETworkManager.Controls
             IsLoading = false;
         }
 
-        private void Browser2_NavigationStarting(object sender, WebViewControlNavigationStartingEventArgs e)
+        private void Browser2_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
         {
             IsLoading = true;
 
